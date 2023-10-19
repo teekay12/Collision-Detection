@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #myCanvas {
+            border: 1px solid #000;
+        }
+    </style>
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="400" height="300"></canvas>
+
+    <script type="text/javascript">
+        // Get the canvas element
+        const canvas = document.getElementById('myCanvas');
+		
+		function draw(objects) {
+			const ctx = canvas.getContext('2d');
+
+			// Draw a red rectangle
+			const colors = ['red', 'blue', 'green', 'black', 'yellow'];
+			
+			for (const obj of objects) {
+				ctx.fillStyle = colors[Math.floor(Math.random() * 5)];
+				ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+			}
+		}
+   
+	
+		function checkIntersection(objects) {
+			console.log(objects.length);
+			for (var i = 0; i < objects.length; i++) {
+				var obj1 = objects[i];
+				var obj1Left = obj1.x;
+				var obj1Right = obj1.x + obj1.width;
+				var obj1Top = obj1.y;
+				var obj1Bottom = obj1.y + obj1.height;
+
+				for (var j = i + 1; j < objects.length; j++) {
+					var obj2 = objects[j];
+					var obj2Left = obj2.x;
+					var obj2Right = obj2.x + obj2.width;
+					var obj2Top = obj2.y;
+					var obj2Bottom = obj2.y + obj2.height;
+
+					if (
+						obj1Left < obj2Right &&
+						obj1Right > obj2Left &&
+						obj1Top < obj2Bottom &&
+						obj1Bottom > obj2Top
+						) {
+						// Intersection found
+						draw([
+								{ x: obj1.x, y: obj1.y, width: obj1.width, height: obj1.height },
+								{ x: obj2.x, y: obj2.y, width: obj2.width, height: obj2.height },
+								// Add more objects as needed
+							]);
+						
+						console.log(obj1Left+ " , " +obj1Right+ " , " +obj1Top+ " , " +obj1Bottom);
+						console.log(obj2Left+ " , " +obj2Right+ " , " +obj2Top+ " , " +obj2Bottom);
+						return true;
+					}
+				}
+			}
+
+		  // No intersection found
+		  return false;
+		}
+
+		// Example usage
+		var objects = [
+		  { x: 50, y: -30, width: 209, height: 100 },
+		  { x: 10, y: 15, width: 150, height: 80 }
+		];
+
+		var hasIntersection = checkIntersection(objects);
+		console.log("Has intersection?", hasIntersection);
+    </script>
+</body>
+</html>
