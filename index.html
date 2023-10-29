@@ -23,68 +23,71 @@
     <script type="text/javascript">
         // Get the canvas element
         const canvas = document.getElementById('myCanvas');
-		
+
 		function draw(objects) {
 			const ctx = canvas.getContext('2d');
 
-			// Draw a red rectangle
 			const colors = ['red', 'blue', 'green', 'black', 'yellow'];
-			
+
 			for (const obj of objects) {
 				ctx.fillStyle = colors[Math.floor(Math.random() * 5)];
 				ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
 			}
 		}
-   
-	
-		function checkIntersection(objects) {
-			console.log(objects.length);
-			for (var i = 0; i < objects.length; i++) {
-				var obj1 = objects[i];
-				var obj1Left = obj1.x;
-				var obj1Right = obj1.x + obj1.width;
-				var obj1Top = obj1.y;
-				var obj1Bottom = obj1.y + obj1.height;
 
-				for (var j = i + 1; j < objects.length; j++) {
-					var obj2 = objects[j];
-					var obj2Left = obj2.x;
-					var obj2Right = obj2.x + obj2.width;
-					var obj2Top = obj2.y;
-					var obj2Bottom = obj2.y + obj2.height;
+		function doObjectsCollides(obj1, obj2) {
+			return (
+				obj1.x < obj2.x + obj2.width &&
+				obj1.x + obj1.width > obj2.x &&
+				obj1.y < obj2.y + obj2.height &&
+				obj1.y + obj1.height > obj2.y
+			);
+		}
 
-					if (
-						obj1Left < obj2Right &&
-						obj1Right > obj2Left &&
-						obj1Top < obj2Bottom &&
-						obj1Bottom > obj2Top
-						) {
-						// Intersection found
-						draw([
-								{ x: obj1.x, y: obj1.y, width: obj1.width, height: obj1.height },
-								{ x: obj2.x, y: obj2.y, width: obj2.width, height: obj2.height },
-								// Add more objects as needed
-							]);
-						
-						console.log(obj1Left+ " , " +obj1Right+ " , " +obj1Top+ " , " +obj1Bottom);
-						console.log(obj2Left+ " , " +obj2Right+ " , " +obj2Top+ " , " +obj2Bottom);
-						return true;
+		function checkCollision(objects) {
+			const collisionObjects = [];
+			const addedIndices = new Set();
+			const objectsCount = objects.length;
+
+			for (let i = 0; i < objectsCount; i++) {
+				const obj1 = objects[i];
+
+				for (let j = i + 1; j < objectsCount; j++) {
+					const obj2 = objects[j];
+
+					if (doObjectsCollides(obj1, obj2)) {
+						if (!addedIndices.has(i)) {
+							collisionObjects.push(obj1);
+							addedIndices.add(i);
+						}
+						if (!addedIndices.has(j)) {
+							collisionObjects.push(obj2);
+							addedIndices.add(j);
+						}
 					}
 				}
 			}
 
-		  // No intersection found
-		  return false;
+			if (collisionObjects.length > 0) {
+				draw(collisionObjects);
+				return true;
+			} else {
+				// No Collision found
+				return false;
+			}
 		}
 
 		// Example usage
-		var objects = [
-		  { x: 50, y: -30, width: 209, height: 100 },
-		  { x: 10, y: 15, width: 150, height: 80 }
+		const objects = [
+			{ x: 50, y: -30, width: 209, height: 100 },
+			{ x: 10, y: 15, width: 150, height: 80 },
+			{ x: 100, y: 40, width: 209, height: 100 },
+			{ x: 130, y: 139, width: 150, height: 80 }
 		];
 
-		var hasIntersection = checkIntersection(objects);
-		console.log("Has intersection?", hasIntersection);
+		const hasCollision = checkCollision(objects);
+		console.log("Has collision?", hasCollision);
+
     </script>
 </body>
 </html>
